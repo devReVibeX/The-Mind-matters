@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GROWTEIN — Recyteq Naturals</title>
+
+<!-- Poppins Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* -------------------------------------------
+   DESIGN TOKENS (Webflow-grade)
+------------------------------------------- */
+:root{
+  --primary:#1F6D39;        /* richer, more professional green */
+  --primary-bright:#3DBE65;
+  --bg:#F5F8F5;
+  --text:#1F1F1F;
+  --muted:#5A5A5A;
+  --card:#FFFFFF;
+
+  --radius:20px;
+  --maxw:1500px;
+
+  --shadow-sm:0 8px 20px rgba(15,50,20,.06);
+  --shadow-md:0 18px 40px rgba(15,50,20,.08);
+  --shadow-lg:0 36px 80px rgba(15,50,20,.12);
+
+  --ease:cubic-bezier(.19,1,.22,1);
+}
+
+/* -------------------------------------------
+   RESET + BASE
+------------------------------------------- */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:"Poppins",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{text-decoration:none;color:inherit;cursor:pointer}
+
+/* -------------------------------------------
+   GLOBAL WRAPPER
+------------------------------------------- */
+.wrap{
+  max-width:var(--maxw);
+  margin:0 auto;
+  padding:70px 50px;
+}
+
+/* -------------------------------------------
+   NAVIGATION
+------------------------------------------- */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:50px;
+}
+
+.brand{
+  display:flex;align-items:center;gap:18px;
+}
+
+.logo{
+  width:90px;height:90px;
+  background:linear-gradient(135deg,#dbffe6,#c3f3d3);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:30px;color:var(--primary);
+  box-shadow:var(--shadow-sm);
+  transition:transform .4s var(--ease);
+}
+.logo:hover{transform:scale(1.07)}
+
+.brand h1{
+  font-size:26px;color:var(--primary);font-weight:700;
+}
+.brand p{font-size:14px;color:var(--muted)}
+
+.nav{
+  display:flex;gap:25px;align-items:center;
+}
+.nav a{
+  font-weight:500;font-size:15px;color:var(--muted);
+  position:relative;
+}
+.nav a::after{
+  content:"";
+  height:2px;width:0;
+  background:var(--primary-bright);
+  position:absolute;left:0;bottom:-3px;
+  transition:width .3s var(--ease);
+}
+.nav a:hover{color:var(--primary)}
+.nav a:hover::after{width:100%}
+
+.nav .cta{
+  background:var(--primary);
+  color:white;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  box-shadow:var(--shadow-md);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.nav .cta:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-lg);
+}
+
+/* -------------------------------------------
+   HERO SECTION
+------------------------------------------- */
+.hero{
+  display:grid;
+  grid-template-columns:1.15fr 560px;
+  gap:60px;
+  align-items:center;
+  padding:70px;
+  background:var(--card);
+  border-radius:30px;
+  box-shadow:var(--shadow-lg);
+}
+
+.eyebrow{
+  background:rgba(31,109,57,0.08);
+  color:var(--primary);
+  padding:10px 14px;
+  display:inline-block;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:600;
+}
+
+.hero h2{
+  font-size:56px;
+  font-weight:700;
+  line-height:1.05;
+  margin:25px 0 15px 0;
+  color:#1A1A1A;
+}
+
+.hero p{
+  font-size:19px;
+  color:var(--muted);
+  max-width:70ch;
+}
+
+.hero-cta{
+  display:flex;gap:18px;margin-top:25px;align-items:center;
+}
+
+.btn-primary{
+  padding:16px 28px;
+  background:linear-gradient(180deg,var(--primary),var(--primary-bright));
+  color:white;
+  font-weight:700;
+  border-radius:14px;
+  box-shadow:0 20px 45px rgba(31,109,57,.2);
+  font-size:18px;
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+.btn-primary:hover{
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:0 32px 60px rgba(31,109,57,.28);
+}
+.btn-primary:active{transform:scale(.97)}
+
+.btn-ghost{
+  font-weight:600;
+  font-size:16px;
+  color:var(--primary);
+  opacity:.85;
+  transition:opacity .25s ease;
+}
+.btn-ghost:hover{opacity:1}
+
+.hero-right{
+  display:flex;align-items:center;justify-content:center;
+}
+.product{
+  width:500px;height:500px;
+  border-radius:28px;
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  border:1px solid rgba(0,0,0,0.03);
+  transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+}
+.product:hover{
+  transform:scale(1.05);
+  box-shadow:0 40px 90px rgba(31,109,57,.22);
+}
+.product img{
+  width:100%;height:100%;object-fit:cover;
+}
+
+/* -------------------------------------------
+   BENEFITS STRIP
+------------------------------------------- */
+.benefits{
+  display:flex;gap:25px;margin-top:60px;
+}
+.benefit{
+  flex:1;
+  background:var(--card);
+  padding:24px;
+  border-radius:20px;
+  box-shadow:var(--shadow-sm);
+  display:flex;gap:16px;
+  align-items:flex-start;
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.benefit:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:var(--shadow-md);
+}
+.icon-wrap{
+  width:60px;height:60px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#e9fbea,#f4fff6);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-sm);
+  transition:transform .35s var(--ease);
+}
+.benefit:hover .icon-wrap{transform:scale(1.12)}
+
+.benefit h4{font-size:18px;color:var(--primary)}
+.benefit p{font-size:15px;color:var(--muted);margin-top:6px}
+
+/* -------------------------------------------
+   SECTIONS
+------------------------------------------- */
+.section{
+  margin-top:80px;
+  padding:60px;
+  background:var(--card);
+  border-radius:26px;
+  box-shadow:var(--shadow-md);
+}
+.section h3{
+  font-size:34px;
+  font-weight:700;
+  color:var(--primary);
+  margin-bottom:12px;
+}
+
+/* CARDS GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
+  gap:26px;
+}
+.card{
+  background:var(--card);
+  padding:28px;
+  border-radius:18px;
+  box-shadow:var(--shadow-sm);
+  border:1px solid rgba(0,0,0,0.04);
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.card:hover{
+  transform:translateY(-10px) scale(1.02);
+  box-shadow:var(--shadow-md);
+}
+.card h4{font-size:20px;color:var(--primary);margin-bottom:10px}
+.card p{color:var(--muted);font-size:15px}
+
+/* STEPS (How it works) */
+.steps{
+  display:flex;gap:25px;margin-top:20px;flex-wrap:wrap;
+}
+.step{
+  flex:1;min-width:260px;
+  background:#f7fbf7;
+  border:1px solid rgba(0,0,0,0.03);
+  padding:28px;border-radius:18px;
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.step:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--shadow-sm);
+}
+.step strong{font-size:18px;color:var(--primary)}
+
+/* TESTIMONIALS */
+.testi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:24px;margin-top:20px;
+}
+.testi{
+  background:var(--card);
+  padding:26px;
+  border-radius:18px;
+  border:1px solid rgba(0,0,0,0.03);
+  box-shadow:var(--shadow-sm);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.testi:hover{
+  transform:translateY(-8px);
+  box-shadow:var(--shadow-md);
+}
+.testi strong{color:var(--primary);font-size:16px}
+.testi p{margin-top:8px;color:var(--muted);font-size:14px}
+
+/* FINAL CTA */
+.final-cta{
+  margin-top:80px;
+  background:linear-gradient(180deg,#e8fdeb,#f4fff8);
+  border-radius:26px;
+  padding:40px 50px;
+  display:flex;justify-content:space-between;align-items:center;
+  box-shadow:var(--shadow-sm);
+  transition:transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.final-cta:hover{
+  transform:scale(1.01);
+  box-shadow:var(--shadow-md);
+}
+.final-cta h3{font-size:30px;color:var(--primary)}
+.final-cta p{color:var(--muted)}
+.cta-actions{display:flex;gap:14px}
+
+/* FOOTER */
+.site-footer{
+  text-align:center;
+  margin-top:60px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* -------------------------------------------
+   FADE-UP ANIMATION
+------------------------------------------- */
+.fade-up{
+  opacity:0;
+  transform:translateY(35px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+}
+.in-view{opacity:1;transform:translateY(0)}
+
+/* -------------------------------------------
+   RESPONSIVE
+------------------------------------------- */
+@media(max-width:1150px){
+  .hero{grid-template-columns:1fr 1fr;padding:50px}
+}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:40px}
+  .product{width:420px;height:420px;margin:0 auto}
+  .benefits{flex-direction:column}
+}
+@media(max-width:600px){
+  .product{width:320px;height:320px}
+  .hero h2{font-size:36px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <!-- NAVIGATION -->
+  <div class="top fade-up">
+    <div class="brand">
+      <div class="logo">R</div>
+      <div>
+        <h1>Recyteq Naturals</h1>
+        <p>GROWTEIN — Plant Growth Protein</p>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a href="#ingredients">Ingredients</a>
+      <a href="#science">Science</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#" class="cta">Shop Now</a>
+    </nav>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div>
+      <div class="eyebrow">Powered by Nature · Backed by Science</div>
+      <h2>Boost Growth. Strengthen Roots. Nourish Naturally.</h2>
+      <p>GROWTEIN blends targeted Nitrogen, Amino Acids and Carbon into a premium nutrient formula engineered for predictable, accelerated plant growth.</p>
+
+      <div class="hero-cta">
+        <a href="#final" class="btn-primary">Try GROWTEIN Today</a>
+        <a href="#science" class="btn-ghost">How it works →</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="product fade-up">
+        <img src="image1.jpeg" alt="Growtein product">
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <div class="benefits fade-up">
+    <div class="benefit">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" stroke="#1F6D39" fill="none" stroke-width="2"><path d="M3 21s6-9 12-9 6 9 6 9"/></svg>
+      </div>
+      <div>
+        <h4>Faster Visible Growth</h4>
+        <p>Scientifically optimized nutrients accelerate plant activity.</p>
+      </div>
+    </div>
+
+    <div class="benefit">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" stroke="#1F6D39" fill="none" stroke-width="2"><path d="M12 2s6 6 6 10a6 6 0 11-12 0c0-4 6-10 6-10z"/></svg>
+      </div>
+      <div>
+        <h4>Simple to Use</h4>
+        <p>5L yield from concentrate/powder ensures value & convenience.</p>
+      </div>
+    </div>
+
+    <div class="benefit">
+      <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" stroke="#1F6D39" fill="none" stroke-width="2"><path d="M7 7h10l-2 10H9z"/></svg>
+      </div>
+      <div>
+        <h4>Lab-Backed Formula</h4>
+        <p>Developed with plant research experts for consistent results.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INGREDIENTS -->
+  <section id="ingredients" class="section fade-up">
+    <h3>Key Ingredients</h3>
+    <p style="color:var(--muted);margin-bottom:20px">Every component contributes to stronger, healthier plants.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h4>Nitrogen</h4>
+        <p>Boosts leafy expansion and chlorophyll formation.</p>
+      </div>
+      <div class="card">
+        <h4>Amino Acids</h4>
+        <p>Enhances nutrient uptake and stress tolerance.</p>
+      </div>
+      <div class="card">
+        <h4>Carbon</h4>
+        <p>Strengthens root integrity and plant structure.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCIENCE -->
+  <section id="science" class="section fade-up" style="background:linear-gradient(180deg,#eefef1,#fbfffc)">
+    <h3>How It Works</h3>
+
+    <div class="steps">
+      <div class="step">
+        <strong>1. Mix</strong>
+        <p>Prepare 5L nutrient feed using concentrate/powder.</p>
+      </div>
+      <div class="step">
+        <strong>2. Apply</strong>
+        <p>Use as foliar spray or root feed depending on plant stage.</p>
+      </div>
+      <div class="step">
+        <strong>3. Grow</strong>
+        <p>Experience visible improvement in density and vitality.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="section fade-up">
+    <h3>What Gardeners Say</h3>
+
+    <div class="testi-grid">
+      <div class="testi">
+        <strong>“In 2 weeks my plants looked twice as healthy.”</strong>
+        <p>- Rina</p>
+      </div>
+      <div class="testi">
+        <strong>“This is genuinely the best nutrient mix I've tried.”</strong>
+        <p>- Arjun</p>
+      </div>
+      <div class="testi">
+        <strong>“The results speak for themselves — greener leaves instantly.”</strong>
+        <p>- Meera</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div id="final" class="final-cta fade-up">
+    <div>
+      <h3>Transform Your Plants Today</h3>
+      <p>Experience science-backed growth with GROWTEIN.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary">Buy Now</a>
+      <a href="#ingredients" class="btn-ghost">View Ingredients</a>
+    </div>
+  </div>
+
+  <div class="site-footer fade-up">
+    © 2025 Recyteq Naturals Pvt Ltd — GROWTEIN™ Plant Growth Formula
+  </div>
+
+</div>
+
+<!-- Fade-up Intersection Observer -->
+<script>
+(function(){
+  const els=[...document.querySelectorAll('.fade-up')];
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const i=els.indexOf(e.target);
+        const delay=Math.min(i*120,500);
+        setTimeout(()=>e.target.classList.add('in-view'),delay);
+        obs.unobserve(e.target);
+      }
+    })
+  },{threshold:0.14});
+  els.forEach(el=>obs.observe(el));
+})();
+</script>
+
+</body>
+</html>

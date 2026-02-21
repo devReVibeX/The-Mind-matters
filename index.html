@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>THE MIND MATTERS — Final Clinical Dashboard</title>
+
+<style>
+/* ---------------------------
+   THEME / BASE
+   --------------------------- */
+:root{
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --text: #071225;
+  --radius: 14px;
+  --card-shadow: 0 18px 40px rgba(12,18,30,0.06);
+
+  /* category colors (colorful but professional) */
+  --c-depression: #2563eb;   /* blue */
+  --c-anxiety:    #f97316;   /* orange */
+  --c-stress:     #ef4444;   /* red */
+  --c-trauma:     #7c3aed;   /* purple */
+  --c-burnout:    #f59e0b;   /* amber */
+  --c-normal:     #10b981;   /* green */
+
+  /* emotion colors */
+  --e-sadness: #2563eb;
+  --e-fear:    #f97316;
+  --e-anger:   #ef4444;
+  --e-guilt:   #7c3aed;
+  --e-shame:   #ec4899;
+  --e-lonely:  #06b6d4;
+  --e-hopeless:#8b5cf6;
+  --e-neutral: #94a3b8;
+  --e-other:   #06b6a4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background:var(--bg); color:var(--text); padding:28px;
+  -webkit-font-smoothing:antialiased;
+}
+/* container */
+.container{max-width:1400px;margin:0 auto;display:grid;grid-template-rows:auto 1fr;gap:20px}
+
+/* header */
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;background:linear-gradient(135deg,var(--c-depression),var(--c-trauma));box-shadow:var(--card-shadow)}
+.title{font-weight:900;font-size:18px}
+.subtitle{color:var(--muted);font-size:13px}
+
+/* layout: two column */
+.grid{
+  display:grid;
+  grid-template-columns: 35% 65%;
+  gap:28px;
+  align-items:start;
+}
+
+/* left panel (analyze) */
+.card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--card-shadow);
+  border:1px solid rgba(10,12,20,0.04);
+}
+.left-col .card{min-height:420px}
+.h3{font-size:16px;font-weight:900;margin-bottom:10px}
+.textarea{
+  width:100%;min-height:160px;padding:14px;border-radius:12px;border:1px solid rgba(10,12,20,0.06);font-size:15px;background:transparent;color:var(--text);resize:vertical
+}
+.controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+.btn{padding:10px 14px;border-radius:12px;border:none;font-weight:800;cursor:pointer}
+.btn-primary{background:linear-gradient(90deg,var(--c-depression),var(--c-trauma));color:white}
+.btn-ghost{background:transparent;border:1px solid rgba(10,12,20,0.06)}
+
+.small-muted{color:var(--muted);font-size:13px;margin-left:auto;font-weight:700}
+
+/* one-click suggestions - analyze */
+.suggestions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.sugg-pill{padding:8px 12px;border-radius:999px;background:rgba(37,99,235,0.09);color:var(--c-depression);font-weight:700;cursor:pointer;border:1px solid rgba(37,99,235,0.06)}
+
+/* info area */
+.info-box{margin-top:16px;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(10,12,20,0.01),transparent);border:1px solid rgba(10,12,20,0.03);color:var(--muted)}
+
+/* right column: results + chat stacked */
+.right-col{display:flex;flex-direction:column;gap:18px}
+
+/* results top card */
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.result-item{background:transparent;padding:10px;border-radius:10px}
+.result-item .label{font-size:13px;color:var(--muted)}
+.result-item .value{font-weight:900;font-size:18px;margin-top:6px}
+
+/* bars area (C3 style professional bars) */
+.bars{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+.bar-row{display:flex;flex-direction:column;gap:6px}
+.bar-label{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.bar-track{height:14px;background:linear-gradient(180deg,rgba(10,12,20,0.03),transparent);border-radius:10px;border:1px solid rgba(10,12,20,0.04);overflow:hidden}
+.bar-fill{height:100%;width:0%;border-radius:10px;transition:width .6s ease}
+
+/* colors for categories */
+.fill-depression{background:linear-gradient(90deg,var(--c-depression),#4f46e5)}
+.fill-anxiety{background:linear-gradient(90deg,var(--c-anxiety),#fb923c)}
+.fill-stress{background:linear-gradient(90deg,var(--c-stress),#ef4444)}
+.fill-trauma{background:linear-gradient(90deg,var(--c-trauma),#8b5cf6)}
+.fill-burnout{background:linear-gradient(90deg,var(--c-burnout),#f59e0b)}
+.fill-normal{background:linear-gradient(90deg,var(--c-normal),#34d399)}
+
+/* emotion bars (smaller) */
+.emotion-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.emotion-row{display:flex;flex-direction:column;gap:6px}
+.emotion-fill{height:12px;border-radius:8px;transition:width .6s ease}
+
+/* interpretation / therapy suggestion */
+.suggest-box{margin-top:12px;padding:12px;border-radius:10px;background:#fff;border:1px solid rgba(10,12,20,0.03);color:var(--muted)}
+
+/* CHAT area (in right column below results) */
+.chat-card{background:var(--surface);padding:14px;border-radius:12px;border:1px solid rgba(10,12,20,0.04);box-shadow:var(--card-shadow)}
+.chat-area{height:300px;overflow:auto;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(10,12,20,0.02),transparent);border:1px solid rgba(10,12,20,0.03);display:flex;flex-direction:column;gap:10px}
+.msg-row{display:flex;width:100%}
+.msg-row.left{justify-content:flex-start}
+.msg-row.right{justify-content:flex-end}
+.bubble{padding:10px 14px;border-radius:14px;max-width:75%;font-size:14px;line-height:1.4}
+.bubble.bot{background:var(--surface);border:1px solid rgba(10,12,20,0.04)}
+.bubble.user{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.12)}
+
+.chat-input-row{display:flex;gap:10px;align-items:center;margin-top:12px}
+.chat-input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(10,12,20,0.06)}
+.quick-row{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.quick-btn{padding:8px 12px;border-radius:999px;background:rgba(37,99,235,0.08);color:var(--c-depression);font-weight:700;cursor:pointer;border:1px solid rgba(37,99,235,0.06);font-size:13px}
+
+/* footer small */
+.footer-note{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* responsive */
+@media (max-width:1100px){
+  .grid{grid-template-columns:1fr;gap:16px}
+  .right-col{order:2}
+  .left-col{order:1}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo">TMM</div>
+      <div>
+        <div class="title">THE MIND MATTERS</div>
+        <div class="subtitle">Clinical Analyzer — Therapy Assistant</div>
+      </div>
+    </div>
+    <div>
+      <select id="themeToggle" style="padding:8px 12px;border-radius:10px;border:1px solid rgba(10,12,20,0.04);font-weight:700">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MAIN GRID: LEFT (analyze) | RIGHT (results + chat) -->
+  <div class="grid">
+
+    <!-- LEFT: Analyze panel -->
+    <div class="left-col">
+      <div class="card">
+        <div class="h3">Share your thoughts</div>
+        <textarea id="userText" class="textarea" placeholder="Write how you've been feeling, events, symptoms, sleep, appetite..."></textarea>
+
+        <div class="controls">
+          <button id="analyzeBtn" class="btn btn-primary">Analyze</button>
+          <button id="resetBtn" class="btn btn-ghost">Clear</button>
+          <div class="small-muted">Local Mode</div>
+        </div>
+
+        <div style="margin-top:14px;font-weight:900">One-click suggestions (Analyze)</div>
+        <div class="suggestions" id="analyzeSuggestions">
+          <div class="sugg-pill" onclick="fillAnalyze('I feel very anxious, can’t sleep and keep worrying.')">Anxiety</div>
+          <div class="sugg-pill" onclick="fillAnalyze('I feel hopeless and sad most days.')">Depression</div>
+          <div class="sugg-pill" onclick="fillAnalyze('Work is exhausting me, I feel burned out.')">Burnout</div>
+          <div class="sugg-pill" onclick="fillAnalyze('I overthink everything and can’t concentrate.')">Overthinking</div>
+        </div>
+
+        <div class="info-box" role="note">
+          The analyzer will return mental-state, dominant emotion, severity, suicide-risk, and symptom indicators.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results + Chat -->
+    <div class="right-col">
+
+      <!-- RESULTS card -->
+      <div class="card">
+        <div class="h3">Latest Analysis</div>
+
+        <div class="result-grid">
+          <div class="result-item"><div class="label">Mental</div><div id="res_mental" class="value">—</div></div>
+          <div class="result-item"><div class="label">Emotion</div><div id="res_emotion" class="value">—</div></div>
+          <div class="result-item"><div class="label">Severity</div><div id="res_severity" class="value">—</div></div>
+          <div class="result-item"><div class="label">Suicide Risk</div><div id="res_risk" class="value">—</div></div>
+        </div>
+
+        <div class="bars" id="categoryBars" aria-hidden="false" style="margin-top:14px">
+          <!-- fill dynamically -->
+          <!-- Example row:
+          <div class="bar-row">
+            <div class="bar-label"><span>Depression</span><span>72% — Moderate</span></div>
+            <div class="bar-track"><div class="bar-fill fill-depression" style="width:72%"></div></div>
+          </div>
+          -->
+        </div>
+
+        <div style="margin-top:12px" class="h3">Emotions (intensity)</div>
+        <div class="emotion-grid" id="emotionBars">
+          <!-- dynamically filled -->
+        </div>
+
+        <div id="analysisInterpret" class="suggest-box" style="margin-top:12px">AI interpretation will appear here after analysis.</div>
+      </div>
+
+      <!-- CHAT card -->
+      <div class="chat-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="h3" style="margin:0">Therapy Assistant — Chat</div>
+          <div class="footer-note">Bot (left) • You (right)</div>
+        </div>
+
+        <div id="chatArea" class="chat-area" aria-live="polite">
+          <div class="msg-row left"><div class="bubble bot">Hi — I'm here to listen. Try Analyze first for personalized help, or ask me directly.</div></div>
+        </div>
+
+        <div class="chat-input-row">
+          <input id="chatInput" class="chat-input" placeholder="Ask the assistant (e.g. Should I consider therapy?)" />
+          <button id="chatSend" class="btn btn-primary">Send</button>
+        </div>
+
+        <div class="quick-row" style="margin-top:10px">
+          <div class="quick-btn" onclick="oneClickChat('What should I do right now?')">What now?</div>
+          <div class="quick-btn" onclick="oneClickChat('Help me calm down')">Calm me</div>
+          <div class="quick-btn" onclick="oneClickChat('Should I see a therapist?')">Therapy?</div>
+          <div class="quick-btn" onclick="oneClickChat('Give me coping tips')">Coping tips</div>
+        </div>
+      </div>
+
+    </div> <!-- end right-col -->
+
+  </div> <!-- end grid -->
+
+</div> <!-- container -->
+
+<script>
+/* ---------------------------
+   CONFIG (endpoints / labels)
+   --------------------------- */
+const ANALYZE_URL = "http://127.0.0.1:5000/analyze"; // your local analyzer
+const CHAT_URL    = "http://127.0.0.1:5100/chat";    // your chat API
+
+const MENTAL_CATS = ["depression","anxiety","stress","trauma","burnout","normal"];
+const EMOTION_CATS = ["sadness","fear","anger","guilt","shame","loneliness","hopelessness","neutral","other"];
+
+/* color -> class mapping for fills */
+const catFill = {
+  depression: "fill-depression",
+  anxiety: "fill-anxiety",
+  stress: "fill-stress",
+  trauma: "fill-trauma",
+  burnout: "fill-burnout",
+  normal: "fill-normal"
+};
+
+/* emotion colors inline (style for small fills) */
+const emotionColor = {
+  sadness: "#2563eb",
+  fear: "#f97316",
+  anger: "#ef4444",
+  guilt: "#7c3aed",
+  shame: "#ec4899",
+  loneliness: "#06b6d4",
+  hopelessness: "#8b5cf6",
+  neutral: "#94a3b8",
+  other: "#06b6a4"
+};
+
+/* ---------------------------
+   UTILS
+   ---------------------------*/
+function clamp(v,min=0,max=100){ return Math.max(min, Math.min(max, v)); }
+function percentToSeverity(p){
+  p = Number(p);
+  if(p >= 67) return "Severe";
+  if(p >= 34) return "Moderate";
+  return "Mild";
+}
+function makeBarHtml(idLabel, percent, severityLabel){
+  const pct = Math.round(percent);
+  const labelEsc = idLabel.charAt(0).toUpperCase() + idLabel.slice(1);
+  const cls = catFill[idLabel] || "fill-normal";
+  return `
+    <div class="bar-row" data-cat="${idLabel}">
+      <div class="bar-label"><span>${labelEsc}</span><span>${pct}% — ${severityLabel}</span></div>
+      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%;"></div></div>
+    </div>
+  `;
+}
+function makeEmotionHtml(key, percent){
+  const pct = Math.round(percent);
+  const color = emotionColor[key] || "#94a3b8";
+  return `
+    <div class="emotion-row">
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px">
+        <span>${key.charAt(0).toUpperCase()+key.slice(1)}</span><span>${pct}%</span>
+      </div>
+      <div class="bar-track" style="height:12px;border-radius:8px">
+        <div class="emotion-fill" style="width:${pct}%;background:${color};"></div>
+      </div>
+    </div>
+  `;
+}
+
+/* ---------------------------
+   RENDER: initial empty bars (0)
+   ---------------------------*/
+function initBars(){
+  const container = document.getElementById("categoryBars");
+  container.innerHTML = "";
+  for(const k of MENTAL_CATS){
+    const sev = percentToSeverity(0);
+    container.insertAdjacentHTML("beforeend", makeBarHtml(k,0,sev));
+  }
+  const em = document.getElementById("emotionBars");
+  em.innerHTML = "";
+  for(const e of EMOTION_CATS){
+    em.insertAdjacentHTML("beforeend", makeEmotionHtml(e,0));
+  }
+}
+initBars();
+
+/* ---------------------------
+   ANALYZE: call API, normalize scores, update bars & UI
+   ---------------------------*/
+let lastAnalysis = null;
+
+async function analyzeText(){
+  const t = document.getElementById("userText").value.trim();
+  if(!t){ alert("Please enter some text to analyze."); return; }
+  setAnalyzeBusy(true);
+  try{
+    const resp = await fetch(ANALYZE_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ text: t })
+    });
+    if(!resp.ok) throw new Error("Analyzer returned " + resp.status);
+    const data = await resp.json();
+    lastAnalysis = data;
+
+    // Update simple fields
+    document.getElementById("res_mental").textContent = data.mental_state || data.mental || "unknown";
+    document.getElementById("res_emotion").textContent = data.emotion || "neutral";
+    document.getElementById("res_severity").textContent = data.severity || data.severity || "unknown";
+    document.getElementById("res_risk").textContent = data.suicide_risk || data.risk || "none";
+    document.getElementById("analysisInterpret").textContent = data.analysis || data.interpretation || "AI interpretation not provided.";
+
+    // Determine mental percentages
+    let mentalPerc = new Array(MENTAL_CATS.length).fill(0);
+    if(Array.isArray(data.mental_scores) && data.mental_scores.length === MENTAL_CATS.length){
+      // normalize to percentages
+      const raw = data.mental_scores.map(Number);
+      const max = Math.max(...raw, 0.000001);
+      // soft normalization: scale by max -> 100 * raw/max (keeps relative)
+      const arr = raw.map(v => (v / max) * 100);
+      mentalPerc = arr.map(v => clamp(v,0,100));
+    } else if(data.confidence && typeof data.confidence === "object" && data.confidence.mental){
+      // if a top probability exists, set that label to 100 and others proportionally zero
+      const top = data.mental_state ? data.mental_state.toLowerCase() : null;
+      mentalPerc = MENTAL_CATS.map(k => k===top ? 100 : 0);
+    } else {
+      // fallback: one-hot
+      const idx = MENTAL_CATS.indexOf((data.mental_state||"").toLowerCase());
+      if(idx >= 0) mentalPerc[idx] = 100;
+      else mentalPerc[MENTAL_CATS.indexOf("normal")] = 0;
+    }
+
+    // Emotion percentages
+    let emotionPerc = new Array(EMOTION_CATS.length).fill(0);
+    if(Array.isArray(data.emotion_scores) && data.emotion_scores.length === EMOTION_CATS.length){
+      const rawE = data.emotion_scores.map(Number);
+      const maxE = Math.max(...rawE, 0.000001);
+      emotionPerc = rawE.map(v => clamp((v / maxE) * 100, 0, 100));
+    } else if(data.emotion){
+      const idx = EMOTION_CATS.indexOf((data.emotion||"").toLowerCase());
+      if(idx >= 0) emotionPerc[idx] = 100;
+    } else {
+      // leave zeros
+    }
+
+    // Update category bars UI
+    updateCategoryBars(mentalPerc);
+    updateEmotionBars(emotionPerc);
+
+    // auto-therapy suggestion logic
+    autoTherapyPrompt(data);
+
+  }catch(err){
+    console.error("Analyze failed:", err);
+    alert("Analysis failed. Is the analyzer (api.py) running and returning JSON?");
+  }finally{
+    setAnalyzeBusy(false);
+  }
+}
+
+function setAnalyzeBusy(flag){
+  const btn = document.getElementById("analyzeBtn");
+  const reset = document.getElementById("resetBtn");
+  if(flag){ btn.disabled = true; btn.textContent = "Analyzing..."; reset.disabled = true; }
+  else { btn.disabled = false; btn.textContent = "Analyze"; reset.disabled = false; }
+}
+
+/* ---------------------------
+   Update bars visuals
+   ---------------------------*/
+function updateCategoryBars(percArr){
+  const container = document.getElementById("categoryBars");
+  container.innerHTML = "";
+  for(let i=0;i<MENTAL_CATS.length;i++){
+    const key = MENTAL_CATS[i];
+    const pct = clamp(percArr[i] || 0,0,100);
+    const sev = percentToSeverity(pct);
+    container.insertAdjacentHTML("beforeend", makeBarHtml(key, pct, sev));
+  }
+}
+function updateEmotionBars(percArr){
+  const emcont = document.getElementById("emotionBars");
+  emcont.innerHTML = "";
+  for(let i=0;i<EMOTION_CATS.length;i++){
+    const key = EMOTION_CATS[i];
+    const pct = clamp(percArr[i] || 0,0,100);
+    emcont.insertAdjacentHTML("beforeend", makeEmotionHtml(key, pct));
+  }
+}
+
+/* ---------------------------
+   Therapy suggestion logic
+   ---------------------------*/
+function autoTherapyPrompt(data){
+  const sev = ((data.severity||"") + "").toLowerCase();
+  const risk = ((data.suicide_risk||data.risk||"") + "").toLowerCase();
+  const text = [];
+
+  if(["severe","high"].includes(sev) || ["moderate","high"].includes(risk)){
+    text.push("Based on this analysis we strongly recommend considering a paid therapy session with THE MIND MATTERS. I can assist in preparing a message and finding a therapist.");
+  } else if(sev === "moderate"){
+    text.push("Consider short-term therapy or coaching — it may help. I can help you prepare and find options.");
+  } else {
+    text.push("You seem to be low-to-mild on severity. Self-care suggestions and short-term coping strategies are likely to help.");
+  }
+
+  // also add actionable tips based on indicators if available
+  if(Array.isArray(data.indicators) && data.indicators.length){
+    const inds = data.indicators.join(", ");
+    text.push("Noted indicators: " + inds + ".");
+  }
+
+  document.getElementById("analysisInterpret").textContent = text.join(" ");
+}
+
+/* ---------------------------
+   CHAT: simple non-streaming chat
+   sends lastAnalysis for context
+   ---------------------------*/
+function addChatBubble(text, role="bot"){
+  const chat = document.getElementById("chatArea");
+  const row = document.createElement("div");
+  row.className = "msg-row " + (role === "user" ? "right" : "left");
+  const b = document.createElement("div");
+  b.className = "bubble " + (role === "user" ? "user" : "bot");
+  b.textContent = text;
+  row.appendChild(b);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+
+  // persist minimal chat in sessionStorage (cleared on tab close)
+  const history = JSON.parse(sessionStorage.getItem("tmm_chat") || "null") || [];
+  history.push({ role, text, t: new Date().toISOString() });
+  sessionStorage.setItem("tmm_chat", JSON.stringify(history));
+  return b;
+}
+
+async function sendChat(){
+  const inp = document.getElementById("chatInput");
+  const msg = inp.value.trim();
+  if(!msg) return;
+  inp.value = "";
+  addChatBubble(msg, "user");
+  const placeholder = addChatBubble("Thinking...", "bot");
+
+  try{
+    const resp = await fetch(CHAT_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ text: msg, analysis: lastAnalysis })
+    });
+    if(!resp.ok) throw new Error("chat returned " + resp.status);
+    const j = await resp.json();
+    placeholder.textContent = j.reply || j.message || j.answer || "I'm here for you.";
+  }catch(err){
+    console.error("Chat failed:", err);
+    placeholder.textContent = "Chat service unavailable. Is api_chat.py running?";
+  }
+}
+
+/* ---------------------------
+   UI wiring
+   ---------------------------*/
+document.getElementById("analyzeBtn").addEventListener("click", analyzeText);
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  document.getElementById("userText").value = "";
+});
+document.getElementById("chatSend").addEventListener("click", sendChat);
+document.getElementById("chatInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
+});
+
+/* one-click helpers */
+function fillAnalyze(txt){
+  document.getElementById("userText").value = txt;
+  // focus for quick analyze
+  document.getElementById("userText").focus();
+}
+function oneClickChat(txt){
+  document.getElementById("chatInput").value = txt;
+  sendChat();
+}
+
+/* restore small session chat if present */
+(function restoreSession(){
+  try{
+    const history = JSON.parse(sessionStorage.getItem("tmm_chat") || "null") || [];
+    const chat = document.getElementById("chatArea");
+    chat.innerHTML = "";
+    if(history.length === 0){
+      addChatBubble("Hi — I'm here to listen. Use Analyze for personalized help.", "bot");
+      return;
+    }
+    history.forEach(m => addChatBubble(m.text, m.role));
+  }catch(e){
+    console.warn("restore session failed", e);
+  }
+})();
+
+/* theme toggle */
+document.getElementById("themeToggle").addEventListener("change", (e)=>{
+  if(e.target.value === "dark") document.body.classList.add("dark");
+  else document.body.classList.remove("dark");
+});
+
+/* initial accessibility improvements (tab focus) */
+document.getElementById("analyzeBtn").addEventListener("keydown", (e)=>{ if(e.key==="Enter") analyzeText(); });
+document.getElementById("chatSend").addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendChat(); });
+
+/* Nice: allow pressing Ctrl+Enter to analyze quickly from textarea */
+document.getElementById("userText").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); analyzeText(); }
+});
+</script>
+</body>
+</html>

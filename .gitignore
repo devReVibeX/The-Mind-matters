@@ -1,0 +1,12 @@
+# datasets
+*.csv
+data/
+
+# trained models
+mental_model_custom/
+*.bin
+*.pt
+
+# python cache
+__pycache__/
+*.pyc
